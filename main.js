@@ -70,7 +70,7 @@ function init(){
         addLine();
     }    
 
-    rendingBlock();
+    Rendering();
 }
 
 function addLine(){
