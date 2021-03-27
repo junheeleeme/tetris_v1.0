@@ -1,3 +1,4 @@
+
 //blocks
 const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이 존재 
     tree : [
@@ -14,9 +15,9 @@ const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이
     ],
     bar : [
         [[1, 0], [2, 0], [3, 0], [4, 0]],
-        [[2, -1], [2, 0], [2, 1], [2, 2]],
+        [[2, 2], [2, 0], [2, 1], [2, 3]],
         [[1, 0], [2, 0], [3, 0], [4, 0]],
-        [[2, -1], [2,0], [2, 1], [2, 2]]
+        [[2, 2], [2, 0], [2, 1], [2, 3]]
     ],
     zee : [
         [[0, 0], [1, 0], [1, 1], [2, 1]],
@@ -46,12 +47,13 @@ const board = document.querySelector(".tetris_board>ul");
 const col = 10;
 const rows = 20;
 let score = 0;
-let speed = 600;
+let speed = 800;
 let temp_block;
-
+let start;
+let esc;
 
 const virtual_block  = {
-    form : 'tree',
+    form : '',
     direction : 0,
     top : 0,
     left : 3
@@ -66,9 +68,8 @@ function init(){
     temp_block = {...virtual_block}; 
     for(let i=0 ; i<rows ; i++){ //테트리스판 행(rows)
         addLine();
-    }    
-
-    Rendering();
+    }
+    generate_Block();
 }
 
 function addLine(){
@@ -76,10 +77,10 @@ function addLine(){
     const li = document.createElement("li");
     // ul > li > --> ul <-- > li
     const ul = document.createElement("ul");
-     
+
     for(let j=0 ; j< col ; j++){ //테트리스판 열(column)
-        const tetris_block = document.createElement("li"); // 테트리스 기본 블록
-        ul.prepend(tetris_block); //prepend로 앞에 생성되기 때문에 [0]
+        const tetris_block = document.createElement("li"); //테트리스 기본 블록
+        ul.prepend(tetris_block); //prepend로 앞에 생성되기 때문에[0]
     }
     li.prepend(ul);
     board.prepend(li); 
@@ -126,7 +127,6 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
             }
         console.log('left : ' + x + ' / Top : ' + y);
     });
-
     //엣지 케이스에서 되돌리기 위한 이전 값 저장
     virtual_block.top = top;
     virtual_block.left = left;
@@ -162,12 +162,12 @@ function clear_Line_check(){
     chk_line.forEach(Line =>{
         Line.childNodes[0].childNodes.forEach( block =>{
             if(block.classList.contains('freeze')){
-               block_cnt++;
-               if(block_cnt === 10){
-                   Line.remove()
-                   addLine()
-               }
-               console.log(block_cnt)
+                block_cnt++;
+                if(block_cnt === 10){
+                    Line.remove();
+                    addLine();
+                }
+                console.log(block_cnt)
             }
             else{
                 block_cnt = 0;
@@ -177,18 +177,22 @@ function clear_Line_check(){
     generate_Block();
 }
 
-
 function generate_Block(){
+    clearInterval(start);
+    start = setInterval(() => {
+        esc = 1;
+        moveBlock('top', 1);
+    }, speed);
 
-    let random = (Math.random() * 6).toFixed(0);
+    let random = (Math.random() * 5).toFixed(0);
     const form = Object.keys(blocks)[random];
+
     virtual_block.form = form;
     virtual_block.top = 0;
     virtual_block.left = 3;
     virtual_block.direction = 0;
     temp_block = {...virtual_block}; 
     Rendering();
-
 }
 
 function moveBlock(move_direction, x){ 
@@ -207,11 +211,42 @@ function changeDirection(){// 블록의 방향을 시계방향으로 움직임
     Rendering();
 }
 
+function gameStop(){
+    clearInterval(start);
+    esc = 0;
+}
+
+function dropBlock(){
+    clearInterval(start);
+    start = setInterval(() => {
+        moveBlock('top', 1);
+        esc = 1;
+    }, 10);
+    
+}
+
 //eventHandling
 document.addEventListener('keydown', e=>{
-
+    console.log(e.keyCode);
     switch(e.keyCode){
-
+        
+        case 27: { //esc
+        //    if(esc === 1){
+                gameStop()
+        //    }else{
+        //        start = setInterval(() => {
+        //            esc = 1;
+        //            moveBlock('top', 1);
+        //        }, speed);
+        //    }
+            
+            break;
+        }
+        
+        case 32: { //스페이스바
+            dropBlock();
+            break;
+        }
         case 37: { //오른쪽
             moveBlock('left', -1);
             break;
@@ -220,12 +255,12 @@ document.addEventListener('keydown', e=>{
             moveBlock('left', 1);
             break;
         }
-        case 40:{
+        case 40:{ //아래
             console.log('키보드누름');
             moveBlock('top', 1);
             break;
         }
-        case 38: {
+        case 38: { //위
             changeDirection();
             break;
         }
