@@ -40,8 +40,11 @@ const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이
 }
 
 //DOM
+const start_wrap = document.querySelector(".start_wrap");
+const start_btn = document.querySelector(".start_btn");
 const board = document.querySelector(".tetris_board>ul");
-
+const stop = document.querySelector(".stop");
+const score_txt = document.querySelector(".score");
 //Variable
 
 const col = 10;
@@ -51,6 +54,7 @@ let speed = 800;
 let temp_block;
 let start;
 let esc;
+let random;
 
 const virtual_block  = {
     form : '',
@@ -60,8 +64,6 @@ const virtual_block  = {
 }
 
 //functions
-
-init();
 
 function init(){
 
@@ -111,10 +113,10 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
         if(isAvailable){
             //해당 위치에 블럭 모양의 클래스이름 추가 및 이동 효과를 위한 moving 클래스 추가
             chk_block.classList.add(form, 'moving'); 
-            console.log("rending")
+
         }else{ //엣지케이스 (좌우범위 이탈과 바닥 터치했을 경우)
                 temp_block = {...virtual_block};
-                console.log('좌우 범위 이탈')
+                
                 setTimeout(()=>{
                     Rendering();
 
@@ -125,13 +127,11 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
                 }, 0)
                 return true;
             }
-        console.log('left : ' + x + ' / Top : ' + y);
     });
     //엣지 케이스에서 되돌리기 위한 이전 값 저장
     virtual_block.top = top;
     virtual_block.left = left;
     virtual_block.direction = direction;
-    console.log('-------------------');
 }
 
 function check_block(target){ 
@@ -155,25 +155,24 @@ function freezeBlock(){ //바닥에서 블록 고정
 }
 
 function clear_Line_check(){ 
-
+    
     const chk_line = board.childNodes; //유사배열보다 배열사용이 용이하여 childNodes사용
-    let block_cnt = 0;
-
     chk_line.forEach(Line =>{
-        Line.childNodes[0].childNodes.forEach( block =>{
-            if(block.classList.contains('freeze')){
-                block_cnt++;
-                if(block_cnt === 10){
-                    Line.remove();
-                    addLine();
-                }
-                console.log(block_cnt)
-            }
-            else{
-                block_cnt = 0;
-            }
-        })
-    })    
+        
+    let line_checker = true;
+    Line.childNodes[0].childNodes.forEach( block =>{
+
+        if(!block.classList.contains('freeze')){
+            line_checker = false;
+        }
+    })         
+        if(line_checker){
+            Line.remove();
+            addLine();
+            score+=10;
+        }                    
+    })
+    score_txt.innerText = score;
     generate_Block();
 }
 
@@ -183,8 +182,8 @@ function generate_Block(){
         esc = 1;
         moveBlock('top', 1);
     }, speed);
-
-    let random = (Math.random() * 5).toFixed(0);
+    
+    random = (Math.random() * 5).toFixed(0);
     const form = Object.keys(blocks)[random];
 
     virtual_block.form = form;
@@ -221,28 +220,34 @@ function dropBlock(){
     start = setInterval(() => {
         moveBlock('top', 1);
         esc = 1;
-    }, 10);
-    
+    }, 15);
 }
 
 //eventHandling
+
+start_btn.addEventListener('click', ()=>{//start
+    start_wrap.style.top = "-100%";
+    init();
+})
+
+
 document.addEventListener('keydown', e=>{
-    console.log(e.keyCode);
+
     switch(e.keyCode){
-        
         case 27: { //esc
-        //    if(esc === 1){
-                gameStop()
-        //    }else{
-        //        start = setInterval(() => {
-        //            esc = 1;
-        //            moveBlock('top', 1);
-        //        }, speed);
-        //    }
-            
+            if(esc === 1){
+                gameStop();
+                stop.style.display = 'block';
+            }else{
+                clearInterval(start);
+                start = setInterval(() => {
+                   esc = 1;
+                   moveBlock('top', 1);
+                }, speed);
+                stop.style.display = 'none';
+            }
             break;
         }
-        
         case 32: { //스페이스바
             dropBlock();
             break;
@@ -256,7 +261,6 @@ document.addEventListener('keydown', e=>{
             break;
         }
         case 40:{ //아래
-            console.log('키보드누름');
             moveBlock('top', 1);
             break;
         }
@@ -269,3 +273,15 @@ document.addEventListener('keydown', e=>{
         }
     }
 })
+
+stop.querySelector(".stop_btn").addEventListener('click', ()=>{
+
+    clearInterval(start);
+    start = setInterval(() => {
+       esc = 1;
+       moveBlock('top', 1);
+    }, speed);
+    stop.style.display = 'none';
+
+})
+
