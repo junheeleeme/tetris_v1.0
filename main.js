@@ -39,22 +39,26 @@ const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이
     ]
 }
 
-//DOM
+// - DOM 
 const start_wrap = document.querySelector(".start_wrap");
 const start_btn = document.querySelector(".start_btn");
+const retry_btn = document.querySelector(".retry_btn");
 const board = document.querySelector(".tetris_board>ul");
-const stop = document.querySelector(".stop");
+const stop = document.querySelector(".stop_wrap");
 const score_txt = document.querySelector(".score");
-//Variable
 
+
+// - Variable
 const col = 10;
 const rows = 20;
 let score = 0;
 let speed = 800;
 let temp_block;
 let start;
-let esc;
+let arrow_btn = 0;
+let esc = 0;
 let random;
+
 
 const virtual_block  = {
     form : '',
@@ -63,10 +67,11 @@ const virtual_block  = {
     left : 3
 }
 
-//functions
 
+// - functions
 function init(){
-
+    esc = 1;
+    arrow_btn = 1;
     temp_block = {...virtual_block}; 
     for(let i=0 ; i<rows ; i++){ //테트리스판 행(rows)
         addLine();
@@ -100,7 +105,6 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
         //moving를 제거해 이동된 자리에 클래스만 남아 css로 블록모양이 유지됨
     })
 
-
     blocks[form][direction].some(block => {
 
         const x = block[0] + left; //블록이 이동될 좌표 저장
@@ -116,9 +120,11 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
 
         }else{ //엣지케이스 (좌우범위 이탈과 바닥 터치했을 경우)
                 temp_block = {...virtual_block};
-                
+                if(edgeCase === 'over'){
+                    gameOver();
+                }
                 setTimeout(()=>{
-                    Rendering();
+                    Rendering('over');
 
                     if(edgeCase === 'top'){ //바닥 터치
                         console.log("바닥 터치!");
@@ -157,24 +163,26 @@ function freezeBlock(){ //바닥에서 블록 고정
 function clear_Line_check(){ 
     
     const chk_line = board.childNodes; //유사배열보다 배열사용이 용이하여 childNodes사용
+    
     chk_line.forEach(Line =>{
         
-    let line_checker = true;
-    Line.childNodes[0].childNodes.forEach( block =>{
+        let line_checker = true;
+        Line.childNodes[0].childNodes.forEach( block =>{
 
         if(!block.classList.contains('freeze')){
             line_checker = false;
         }
-    })         
-        if(line_checker){
-            Line.remove();
-            addLine();
-            score+=10;
-        }                    
-    })
-    score_txt.innerText = score;
-    generate_Block();
+        })         
+            if(line_checker){
+                Line.remove();
+                addLine();
+                score+=10;
+                score_txt.innerText = score;
+            }                    
+        })
+        generate_Block();
 }
+
 
 function generate_Block(){
     clearInterval(start);
@@ -213,6 +221,7 @@ function changeDirection(){// 블록의 방향을 시계방향으로 움직임
 function gameStop(){
     clearInterval(start);
     esc = 0;
+    stop.style.display = 'block';
 }
 
 function dropBlock(){
@@ -223,8 +232,15 @@ function dropBlock(){
     }, 15);
 }
 
-//eventHandling
+function gameOver(){
+    clearInterval(start);
+    esc = 0;
+    arrow_btn = 0;
+    document.querySelector(".gameover").style.display = "block";
+}
 
+
+// - EventHandling 이벤트 -
 start_btn.addEventListener('click', ()=>{//start
     start_wrap.style.top = "-100%";
     init();
@@ -233,43 +249,56 @@ start_btn.addEventListener('click', ()=>{//start
 
 document.addEventListener('keydown', e=>{
 
-    switch(e.keyCode){
-        case 27: { //esc
-            if(esc === 1){
-                gameStop();
-                stop.style.display = 'block';
-            }else{
-                clearInterval(start);
-                start = setInterval(() => {
-                   esc = 1;
-                   moveBlock('top', 1);
-                }, speed);
-                stop.style.display = 'none';
+    const key_chk = esc === 1 ? true : false;
+    console.log(key_chk)
+    if(arrow_btn === 1){
+        switch(e.keyCode){
+            case 27: { //esc
+                if(key_chk){
+                    gameStop();
+                }else{
+                    esc = 1;
+                    clearInterval(start);
+                    start = setInterval(() => {
+                    moveBlock('top', 1);
+                    }, speed);
+                    stop.style.display = 'none';
+                }
+                break;
             }
-            break;
-        }
-        case 32: { //스페이스바
-            dropBlock();
-            break;
-        }
-        case 37: { //오른쪽
-            moveBlock('left', -1);
-            break;
-        }
-        case 39: { //오른쪽
-            moveBlock('left', 1);
-            break;
-        }
-        case 40:{ //아래
-            moveBlock('top', 1);
-            break;
-        }
-        case 38: { //위
-            changeDirection();
-            break;
-        }
-        default: {
-            break;
+            case 32: { //스페이스바
+                if(key_chk){
+                    dropBlock();
+                }
+                break;
+            }
+            case 37: { //오른쪽
+                if(key_chk){
+                    moveBlock('left', -1);
+                }
+                break;
+            }
+            case 39: { //오른쪽
+                if(key_chk){
+                    moveBlock('left', 1);
+                }
+                break;
+            }
+            case 40:{ //아래
+                if(key_chk){
+                    moveBlock('top', 1);
+                }
+                break;
+            }
+            case 38: { //위
+                if(key_chk){
+                    changeDirection();
+                }    
+                break;
+            }
+            default: {
+                break;
+            }
         }
     }
 })
@@ -279,9 +308,18 @@ stop.querySelector(".stop_btn").addEventListener('click', ()=>{
     clearInterval(start);
     start = setInterval(() => {
        esc = 1;
+       arrow_btn = 1;
        moveBlock('top', 1);
     }, speed);
     stop.style.display = 'none';
 
 })
 
+retry_btn.addEventListener('click', ()=>{
+
+    document.querySelector(".gameover").style.display = "none";
+    board.innerHTML = "";
+    score = 0;
+    score_txt.innerText = score;
+    init();
+})
