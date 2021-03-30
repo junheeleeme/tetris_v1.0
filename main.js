@@ -14,9 +14,9 @@ const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이
         [[0,0], [0,1], [1, 0], [1, 1]]
     ],
     bar : [
-        [[1, 0], [2, 0], [3, 0], [4, 0]],
+        [[0, 0], [1, 0], [2, 0], [3, 0]],
         [[2, 2], [2, 0], [2, 1], [2, 3]],
-        [[1, 0], [2, 0], [3, 0], [4, 0]],
+        [[0, 0], [1, 0], [2, 0], [3, 0]],
         [[2, 2], [2, 0], [2, 1], [2, 3]]
     ],
     zee : [
@@ -46,6 +46,7 @@ const retry_btn = document.querySelector(".retry_btn");
 const board = document.querySelector(".tetris_board>ul");
 const stop = document.querySelector(".stop_wrap");
 const score_txt = document.querySelector(".score");
+const next_board = document.querySelector(".next_block");
 
 
 // - Variable
@@ -57,8 +58,7 @@ let temp_block;
 let start;
 let arrow_btn = 0;
 let esc = 0;
-let random;
-
+let next_block;
 
 const virtual_block  = {
     form : '',
@@ -76,7 +76,7 @@ function init(){
     for(let i=0 ; i<rows ; i++){ //테트리스판 행(rows)
         addLine();
     }
-    generate_Block();
+    generate_Block(next_block);
 }
 
 function addLine(){
@@ -157,6 +157,7 @@ function freezeBlock(){ //바닥에서 블록 고정
         block.classList.replace('moving', 'freeze'); 
     //선언한 moving 클래스를 freeze로 변경하여 기존 블럭 모양은 css로 유지
     })
+
     clear_Line_check();
 }
 
@@ -165,41 +166,65 @@ function clear_Line_check(){
     const chk_line = board.childNodes; //유사배열보다 배열사용이 용이하여 childNodes사용
     
     chk_line.forEach(Line =>{
-        
         let line_checker = true;
-        Line.childNodes[0].childNodes.forEach( block =>{
 
-        if(!block.classList.contains('freeze')){
-            line_checker = false;
-        }
-        })         
-            if(line_checker){
+        Line.childNodes[0].childNodes.forEach( block =>{
+            if(!block.classList.contains('freeze')){
+                line_checker = false;
+            }
+        })       
+
+        if(line_checker){
                 Line.remove();
                 addLine();
                 score+=10;
                 score_txt.innerText = score;
             }                    
         })
-        generate_Block();
+
+        generate_Block(next_block);
 }
 
 
-function generate_Block(){
+function generate_Block(next){
+    
     clearInterval(start);
     start = setInterval(() => {
         esc = 1;
         moveBlock('top', 1);
     }, speed);
     
-    random = (Math.random() * 5).toFixed(0);
-    const form = Object.keys(blocks)[random];
+    next_block = (Math.random() * 5).toFixed(0);
 
+    const form = Object.keys(blocks)[next_block];
+    
     virtual_block.form = form;
     virtual_block.top = 0;
     virtual_block.left = 3;
     virtual_block.direction = 0;
+    
     temp_block = {...virtual_block}; 
     Rendering();
+    next_rendering(next_block);
+};
+
+function next_rendering(next){
+    
+    const n_block = Object.keys(blocks)[next]; //form 확인
+    const next_block = next_board.querySelectorAll('.next');
+
+    next_block.forEach(next =>{ //클래스 초기화
+        next.className = "";
+    })
+
+    blocks[n_block][0].forEach(block =>{
+        const x = block[0];
+        const y = block[1] + 1;
+        console.log(x + ' + ' + y);
+        next_board.children[y].children[0].children[x].classList.remove();
+        next_board.children[y].children[0].children[x].classList.add(n_block, 'next');
+    });
+    temp_form = n_block;
 }
 
 function moveBlock(move_direction, x){ 
@@ -239,7 +264,6 @@ function gameOver(){
     document.querySelector(".gameover").style.display = "block";
 }
 
-
 // - EventHandling 이벤트 -
 start_btn.addEventListener('click', ()=>{//start
     start_wrap.style.top = "-100%";
@@ -250,7 +274,7 @@ start_btn.addEventListener('click', ()=>{//start
 document.addEventListener('keydown', e=>{
 
     const key_chk = esc === 1 ? true : false;
-    console.log(key_chk)
+
     if(arrow_btn === 1){
         switch(e.keyCode){
             case 27: { //esc
@@ -322,4 +346,5 @@ retry_btn.addEventListener('click', ()=>{
     score = 0;
     score_txt.innerText = score;
     init();
+
 })
