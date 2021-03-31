@@ -209,22 +209,34 @@ function generate_Block(next){
 };
 
 function next_rendering(next){
+
     
-    const n_block = Object.keys(blocks)[next]; //form 확인
+    const n_block = Object.keys(blocks)[next]; //블록 모양 확인
     const next_block = next_board.querySelectorAll('.next');
+
+    //블록 모양에 따른 랜더링 위치 정렬
+    if(n_block === 'tree' || n_block === 'elLeft' || 
+        n_block === 'elRight' || n_block === 'zee' ){
+        next_board.style.margin = "0 0 0 30px";
+    }
+    else{
+        next_board.style.margin = "0";
+    }
 
     next_block.forEach(next =>{ //클래스 초기화
         next.className = "";
     })
 
     blocks[n_block][0].forEach(block =>{
-        const x = block[0];
-        const y = block[1] + 1;
-        console.log(x + ' + ' + y);
+        
+
+        const x = n_block === 'squre' ? block[0]+1 : block[0];
+        const y = block[1];
         next_board.children[y].children[0].children[x].classList.remove();
         next_board.children[y].children[0].children[x].classList.add(n_block, 'next');
     });
-    temp_form = n_block;
+    
+    
 }
 
 function moveBlock(move_direction, x){ 

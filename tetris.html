@@ -8,6 +8,55 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="wrap">
+
+        <div class="tetris_wrap">  
+
+            <div class="stop_wrap">
+                <h3 class="stop_msg">STOP!</h3>
+                <a href="#" onclick="return false;" class="stop_btn">계속하기</a>
+            </div>
+    
+            <section class="tetris_board">
+                <ul></ul>
+            </section>
+    
+            <section class="support_board">
+                <div class="next_wrap">
+                    <h2>Next</h2>
+                    <ul class="next_block">
+                        <li>
+                            <ul>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="score_wrap">
+                    <h2>score</h2>
+                    <h3 class="score">0</h3>
+                </div>
+                <div class="level_wrap">
+                    <h2>Level</h2>
+                    <h3 class="level">1</h3>
+                </div>
+
+
+            </section>
+        </div>
+
+    </div>
 
     <div class="start_wrap">
         <div class="start_inner"><span>Tetris Start!</span></div>
@@ -19,61 +68,9 @@
             <a href="#" onclick="return false;" class="retry_btn">다시하기</a>
         </div>
     </div>
-
-    <div class="tetris_wrap">  
-
-        <div class="stop_wrap">
-            <h3 class="stop_msg">STOP!</h3>
-             <a href="#" onclick="return false;" class="stop_btn">계속하기</a>
-        </div>
-        
-
-        <div class="tetris_wrap">
-
-            <div class="tetris_board">
-                <ul></ul>
-            </div>
-
-            <div class="support_board">
-                <h2>score : <span class="score">0</span></h2>
-                <ul class="next_block">
-                    <li>
-                        <ul>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <ul>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <ul>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <ul>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-    </div>
+    
+    
+    
 <script src="/main.js"></script>
 </body>
 </html>
