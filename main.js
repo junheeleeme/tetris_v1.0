@@ -58,7 +58,9 @@ let temp_block;
 let start;
 let arrow_btn = 0;
 let esc = 0;
-let next_block;
+let next_blk;
+let current_blk;
+
 
 const virtual_block  = {
     form : '',
@@ -66,7 +68,6 @@ const virtual_block  = {
     top : 0,
     left : 3
 }
-
 
 // - functions
 function init(){
@@ -76,7 +77,9 @@ function init(){
     for(let i=0 ; i<rows ; i++){ //테트리스판 행(rows)
         addLine();
     }
-    generate_Block(next_block);
+    current_blk = (Math.random() * 5).toFixed(0);
+    generate_Block();
+    
 }
 
 function addLine(){
@@ -127,7 +130,6 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
                     Rendering('over');
 
                     if(edgeCase === 'top'){ //바닥 터치
-                        console.log("바닥 터치!");
                         freezeBlock();  //블록 고정
                     }
                 }, 0)
@@ -182,11 +184,11 @@ function clear_Line_check(){
             }                    
         })
 
-        generate_Block(next_block);
+        generate_Block();
 }
 
 
-function generate_Block(next){
+function generate_Block(){
     
     clearInterval(start);
     start = setInterval(() => {
@@ -194,9 +196,11 @@ function generate_Block(next){
         moveBlock('top', 1);
     }, speed);
     
-    next_block = (Math.random() * 5).toFixed(0);
 
-    const form = Object.keys(blocks)[next_block];
+    next_blk = (Math.random() * 5).toFixed(0);
+    next_rendering(next_blk);
+
+    const form = Object.keys(blocks)[current_blk];
     
     virtual_block.form = form;
     virtual_block.top = 0;
@@ -205,7 +209,7 @@ function generate_Block(next){
     
     temp_block = {...virtual_block}; 
     Rendering();
-    next_rendering(next_block);
+    current_blk = next_blk;
 };
 
 function next_rendering(next){
