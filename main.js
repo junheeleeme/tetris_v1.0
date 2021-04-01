@@ -57,14 +57,12 @@ let score = 0;
 let speed = 1000;
 let temp_block;
 let start;
-let arrow_btn = 0;
+let prevent_key = 0; //키 입력 방지
+let prevent_move = 1; //drop할때 움직임 방지
 let esc = 0;
 let next_blk;
 let current_blk;
 let level = 1;
-let level_chk = 100;
-let prevent_key=1;
-
 
 const virtual_block  = {
     form : '',
@@ -76,14 +74,20 @@ const virtual_block  = {
 // - functions
 function init(){
     esc = 1;
-    arrow_btn = 1;
+    prevent_key = 1;
+    level = 1;
+    level_txt.innerText = level;
+    score = 0;
+    speed=1000;
+    score_txt.innerText = score;
     temp_block = {...virtual_block}; 
+
     for(let i=0 ; i<rows ; i++){ //테트리스판 행(rows)
         addLine();
     }
+
     current_blk = (Math.random() * 5).toFixed(0);
     generate_Block();
-    
 }
 
 function addLine(){
@@ -294,7 +298,7 @@ function dropBlock(){
 function gameOver(){
     clearInterval(start);
     esc = 0;
-    arrow_btn = 0;
+    prevent_key = 0;
     document.querySelector(".gameover").style.display = "block";
 }
 
@@ -309,7 +313,7 @@ document.addEventListener('keydown', e=>{
 
     const key_chk = esc === 1 ? true : false;
 
-    if(arrow_btn === 1){
+    if(prevent_key === 1){
         switch(e.keyCode){
             case 27: { //esc
                 if(key_chk){
@@ -332,25 +336,25 @@ document.addEventListener('keydown', e=>{
                 break;
             }
             case 37: { //오른쪽
-                if(key_chk && prevent_key === 1){
+                if(key_chk && prevent_move === 1){
                     moveBlock('left', -1);
                 }
                 break;
             }
             case 39: { //오른쪽
-                if(key_chk && prevent_key === 1){
+                if(key_chk && prevent_move === 1){
                     moveBlock('left', 1);
                 }
                 break;
             }
             case 40:{ //아래
-                if(key_chk && prevent_key === 1){
+                if(key_chk && prevent_move === 1){
                     moveBlock('top', 1);
                 }
                 break;
             }
             case 38: { //위
-                if(key_chk && prevent_key === 1){
+                if(key_chk && prevent_move === 1){
                     changeDirection();
                 }    
                 break;
@@ -367,7 +371,7 @@ stop.querySelector(".stop_btn").addEventListener('click', ()=>{
     clearInterval(start);
     start = setInterval(() => {
        esc = 1;
-       arrow_btn = 1;
+       prevent_key = 1;
        moveBlock('top', 1);
     }, speed);
     stop.style.display = 'none';
@@ -378,8 +382,5 @@ retry_btn.addEventListener('click', ()=>{
 
     document.querySelector(".gameover").style.display = "none";
     board.innerHTML = "";
-    score = 0;
-    score_txt.innerText = score;
     init();
-
 })
