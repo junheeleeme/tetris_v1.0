@@ -46,6 +46,7 @@ const retry_btn = document.querySelector(".retry_btn");
 const board = document.querySelector(".tetris_board>ul");
 const stop = document.querySelector(".stop_wrap");
 const score_txt = document.querySelector(".score");
+const level_txt = document.querySelector(".level");
 const next_board = document.querySelector(".next_block");
 
 
@@ -53,13 +54,16 @@ const next_board = document.querySelector(".next_block");
 const col = 10;
 const rows = 20;
 let score = 0;
-let speed = 800;
+let speed = 1000;
 let temp_block;
 let start;
 let arrow_btn = 0;
 let esc = 0;
 let next_blk;
 let current_blk;
+let level = 1;
+let level_chk = 100;
+let prevent_key=1;
 
 
 const virtual_block  = {
@@ -124,6 +128,7 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
         }else{ //엣지케이스 (좌우범위 이탈과 바닥 터치했을 경우)
                 temp_block = {...virtual_block};
                 if(edgeCase === 'over'){
+                    clearInterval(start);
                     gameOver();
                 }
                 setTimeout(()=>{
@@ -181,6 +186,18 @@ function clear_Line_check(){
                 addLine();
                 score+=10;
                 score_txt.innerText = score;
+                
+                if(score%100 === 0){
+                    level++;
+                    level_txt.innerText = level;
+                    if(speed > 200){
+                        speed-=100;
+                    }
+                    else{
+                        speed = 200;
+                    }
+                }
+                console.log('score : ' + score + 'level : '+ level + "/ speed : " + speed)
             }                    
         })
 
@@ -232,8 +249,6 @@ function next_rendering(next){
     })
 
     blocks[n_block][0].forEach(block =>{
-        
-
         const x = n_block === 'squre' ? block[0]+1 : block[0];
         const y = block[1];
         next_board.children[y].children[0].children[x].classList.remove();
@@ -271,6 +286,9 @@ function dropBlock(){
         moveBlock('top', 1);
         esc = 1;
     }, 15);
+    setTimeout(()=>{
+        prevent_key = 1;
+    }, 200);
 }
 
 function gameOver(){
@@ -309,29 +327,30 @@ document.addEventListener('keydown', e=>{
             case 32: { //스페이스바
                 if(key_chk){
                     dropBlock();
+                    prevent_key = 0;
                 }
                 break;
             }
             case 37: { //오른쪽
-                if(key_chk){
+                if(key_chk && prevent_key === 1){
                     moveBlock('left', -1);
                 }
                 break;
             }
             case 39: { //오른쪽
-                if(key_chk){
+                if(key_chk && prevent_key === 1){
                     moveBlock('left', 1);
                 }
                 break;
             }
             case 40:{ //아래
-                if(key_chk){
+                if(key_chk && prevent_key === 1){
                     moveBlock('top', 1);
                 }
                 break;
             }
             case 38: { //위
-                if(key_chk){
+                if(key_chk && prevent_key === 1){
                     changeDirection();
                 }    
                 break;
