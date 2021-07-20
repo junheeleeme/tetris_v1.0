@@ -300,6 +300,9 @@ function gameOver(){
     esc = 0;
     prevent_key = 0;
     document.querySelector(".gameover").style.display = "block";
+    
+    //axios
+
 }
 
 // - EventHandling 이벤트 -
@@ -370,9 +373,9 @@ stop.querySelector(".stop_btn").addEventListener('click', ()=>{
 
     clearInterval(start);
     start = setInterval(() => {
-       esc = 1;
-       prevent_key = 1;
-       moveBlock('top', 1);
+        esc = 1;
+        prevent_key = 1;
+        moveBlock('top', 1);
     }, speed);
     stop.style.display = 'none';
 

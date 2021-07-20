@@ -1,5 +1,8 @@
-# tetris_v1.0
+# Tetris for DeskTop
+
 ## 자바스크립트를 활용한 테트리스 게임
+
+## --> [Link](https://www.juni-official.com/tetris)
 
 ### 조작법
 1. 이동 : ← →
