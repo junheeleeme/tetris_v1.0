@@ -1,4 +1,37 @@
 
+// - DOM 
+const start_wrap = document.querySelector(".start_wrap");
+const start_btn = document.querySelector(".start_btn");
+const retry_btn = document.querySelector(".retry_btn");
+const board = document.querySelector(".tetris_board>ul");
+const stop = document.querySelector(".stop_wrap");
+const score_txt = document.querySelector(".score");
+const level_txt = document.querySelector(".level");
+const next_board = document.querySelector(".next_block");
+const rankBtn = document.querySelector("#rankBtn");
+const rank_table = document.querySelector(".rk-table");
+
+// - Variable
+const col = 10;
+const rows = 20;
+let score = 0;
+let speed = 1000;
+let temp_block;
+let start;
+let prevent_key = 0; //키 입력 방지
+let prevent_move = 1; //drop할때 움직임 방지
+let esc = 0;
+let next_blk;
+let current_blk;
+let level = 1;
+
+const virtual_block  = {
+    form : '',
+    direction : 0,
+    top : 0,
+    left : 3
+};
+
 //blocks
 const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이 존재 
     tree : [
@@ -39,37 +72,6 @@ const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이
     ]
 }
 
-// - DOM 
-const start_wrap = document.querySelector(".start_wrap");
-const start_btn = document.querySelector(".start_btn");
-const retry_btn = document.querySelector(".retry_btn");
-const board = document.querySelector(".tetris_board>ul");
-const stop = document.querySelector(".stop_wrap");
-const score_txt = document.querySelector(".score");
-const level_txt = document.querySelector(".level");
-const next_board = document.querySelector(".next_block");
-
-
-// - Variable
-const col = 10;
-const rows = 20;
-let score = 0;
-let speed = 1000;
-let temp_block;
-let start;
-let prevent_key = 0; //키 입력 방지
-let prevent_move = 1; //drop할때 움직임 방지
-let esc = 0;
-let next_blk;
-let current_blk;
-let level = 1;
-
-const virtual_block  = {
-    form : '',
-    direction : 0,
-    top : 0,
-    left : 3
-}
 
 // - functions
 function init(){
@@ -86,6 +88,7 @@ function init(){
         addLine();
     }
 
+    retry_btn.style.display = 'none';
     current_blk = (Math.random() * 5).toFixed(0);
     generate_Block();
 }
@@ -131,9 +134,10 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
 
         }else{ //엣지케이스 (좌우범위 이탈과 바닥 터치했을 경우)
                 temp_block = {...virtual_block};
-                if(edgeCase === 'over'){
+                if(edgeCase === 'over'){ // 게임 종료
                     clearInterval(start);
                     gameOver();
+                    return true;
                 }
                 setTimeout(()=>{
                     Rendering('over');
@@ -201,7 +205,7 @@ function clear_Line_check(){
                         speed = 200;
                     }
                 }
-                console.log('score : ' + score + 'level : '+ level + "/ speed : " + speed)
+                //console.log('score : ' + score + 'level : '+ level + "/ speed : " + speed)
             }                    
         })
 
@@ -295,13 +299,74 @@ function dropBlock(){
     }, 200);
 }
 
+
 function gameOver(){
+
+    axios.get(`/rank?score=${score}`).then((res)=>{
+        
+        if(res.data === 'ranker'){ //랭킹 점수에 도달했을 경우
+
+            setTimeout(()=>{
+                document.querySelector(".rank-submit").style.display = "block";
+                document.querySelector(".rank-submit").style.top = "50%";
+            }, 700);
+            
+        }else{ //랭킹 점수에 미달했을 경우
+            retry_btn.style.display = "block";
+        }
+
+    }).catch(err=>{
+        console.log(err);
+    })
+
     clearInterval(start);
     esc = 0;
     prevent_key = 0;
     document.querySelector(".gameover").style.display = "block";
-    
-    //axios
+
+}
+
+function rankSubmit(){ //랭킹 점수 전송
+
+    const name = document.querySelector("#nicname").value.replace(/ /g,"");
+
+    if(name !== ''){ //빈공백 체크
+
+        axios.post('/rank', {
+            "name" : name,
+            "score" : score
+        }).then((res)=>{ //전송 성공
+            document.querySelector("#nicname").value = '';
+            document.querySelector(".rank-submit").style.top = "-50%";
+
+            setTimeout(()=>{
+                document.querySelector(".rank-submit").style.display = "none";
+                retry_btn.style.display = "block";
+            },500)
+
+        }).catch(err =>{
+            console.log(err);
+        });
+    }else{
+        alert("닉네임을 입력해주세요.");
+    }
+}
+
+setRank();
+async function setRank() {
+
+    rank_table.children[0].innerHTML=`<tr><th>순위</th><th>닉네임</th><th>점수</th></tr>`;
+    axios.get('/readrank').then((res)=>{
+        
+        const rank = res.data;
+
+        rank.map((rk, idx)=>{
+            rank_table.children[0].innerHTML+=` <tr><td>${idx+1}</td><td>${rk.name}</td><td>${rk.score}</td></tr>`;
+        });
+        
+    }).catch(err =>{
+        console.log(err);
+    })
 
 }
 
@@ -382,8 +447,14 @@ stop.querySelector(".stop_btn").addEventListener('click', ()=>{
 })
 
 retry_btn.addEventListener('click', ()=>{
-
+    setRank();
     document.querySelector(".gameover").style.display = "none";
     board.innerHTML = "";
     init();
 })
+
+rankBtn.addEventListener('click', ()=>{
+    rankSubmit();
+})
+
+

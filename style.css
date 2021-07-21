@@ -112,6 +112,7 @@ a{ text-decoration: none; }
 }
 
 .retry_btn{
+    display: none;
     color: #fff;
     border: 1px solid #fff;
     padding: 8px 30px;
@@ -127,11 +128,56 @@ a{ text-decoration: none; }
 
 /* ------------ Rank ------------ */
 
+.rank-submit{
+    display: none;
+    position: absolute;
+    top: -50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    height: 250px;
+    padding: 20px 0;
+    background-color: #DBE6FD;
+    border-radius: 5px;
+    z-index: 9999;
+    transition: 1s ease;
+}
+
+.rank-submit>h3{
+    color: #232323;
+    text-align: center;
+    margin: 15px 0;
+}
+
+#nicname{
+    display: inline-block;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 33px;
+    padding: 3px 5px;
+    border-radius: 3px;
+    border: 1px solid #47597E;
+    text-align: center;
+    outline: 0;
+}
+#rankBtn{
+    position: absolute;
+    bottom: 20px; left: 50%;
+    transform: translate(-50%, 0);
+    display: block;
+    width: 90%;
+    height: 37px;
+    color: #fff;
+    background-color: #47597E;
+    cursor: pointer;
+}
+
 .rank{
     position: absolute;
     top: 0;
     left: 0;
-    width: 200px;
+    width: 230px;
     height: 300px;
 }
 
@@ -147,6 +193,7 @@ a{ text-decoration: none; }
 }
 .rk-table tr:nth-child(2){
     background-color: #FB3640;
+
 }
 .rk-table tr:nth-child(3){
     background-color: #7C83FD;
@@ -156,8 +203,17 @@ a{ text-decoration: none; }
 }
 
 .rk-table th, .rk-table td{
-    width: 33%;
     padding: 3px;
+}
+
+.rk-table tr>th:first-child{
+    width: 20%;
+}
+.rk-table tr>th:nth-child(2){
+    width: 60%;
+}
+.rk-table tr>th:nth-child(3){
+    width: 20%;
 }
 
 .tetris_wrap{
