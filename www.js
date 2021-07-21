@@ -83,7 +83,6 @@ app.post('/rank', (req, res) => {
 
 });
 
-app.post('/')
 
 
 app.listen(port, (err)=>{
