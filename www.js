@@ -22,7 +22,7 @@ app.get('/rank?', (req, res) => {
     fs.readFile('./rank.json', 'utf8', (err, json)=>{
 
         if(!err){
-            
+        
             const rankData = JSON.parse(json);
             const last = rankData.length-1;
         

@@ -12,6 +12,7 @@ const rankBtn = document.querySelector("#rankBtn");
 const rank_table = document.querySelector(".rk-table");
 
 // - Variable
+const check = [];
 const col = 10;
 const rows = 20;
 let score = 0;
@@ -198,6 +199,7 @@ function clear_Line_check(){
                 if(score%100 === 0){
                     level++;
                     level_txt.innerText = level;
+                    check.push('^^');
                     if(speed > 200){
                         speed-=100;
                     }
@@ -302,22 +304,24 @@ function dropBlock(){
 
 function gameOver(){
 
-    axios.get(`/rank?score=${score}`).then((res)=>{
-        
-        if(res.data === 'ranker'){ //랭킹 점수에 도달했을 경우
-
-            setTimeout(()=>{
-                document.querySelector(".rank-submit").style.display = "block";
-                document.querySelector(".rank-submit").style.top = "50%";
-            }, 700);
+    if((score/100).toFixed(0) === check.length.toString()){
+        axios.get(`/rank?score=${score}`).then((res)=>{
             
-        }else{ //랭킹 점수에 미달했을 경우
-            retry_btn.style.display = "block";
-        }
+            if(res.data === 'ranker'){ //랭킹 점수에 도달했을 경우
 
-    }).catch(err=>{
-        console.log(err);
-    })
+                setTimeout(()=>{
+                    document.querySelector(".rank-submit").style.display = "block";
+                    document.querySelector(".rank-submit").style.top = "50%";
+                }, 700);
+                
+            }else{ //랭킹 점수에 미달했을 경우
+                retry_btn.style.display = "block";
+            }
+
+        }).catch(err=>{
+            console.log(err);
+        });
+    }
 
     clearInterval(start);
     esc = 0;
