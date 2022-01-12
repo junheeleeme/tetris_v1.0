@@ -304,6 +304,11 @@ function dropBlock(){
 
 function gameOver(){
 
+    clearInterval(start);
+    esc = 0;
+    prevent_key = 0;
+    document.querySelector(".gameover").style.display = "block";
+
     if((score/100).toFixed(0) === check.length.toString()){
         axios.get(`/rank?score=${score}`).then((res)=>{
             
@@ -323,10 +328,7 @@ function gameOver(){
         });
     }
 
-    clearInterval(start);
-    esc = 0;
-    prevent_key = 0;
-    document.querySelector(".gameover").style.display = "block";
+
 
 }
 

@@ -15,17 +15,68 @@ ul{ list-style: none; padding: 0; }
 a{ text-decoration: none; }
 
 
+.bar{
+    background: #f6395a;
+    border-top: 4px solid rgba(240,240,240, 0.5) !important;
+    border-right: 4px solid rgba(0,0,0, 0.3) !important;
+    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
+    border-left: 4px solid rgba(0,0,0, 0.1) !important;
+}
+
+.tree{
+    background: #c0e218;
+    border-top: 4px solid rgba(240,240,240, 0.5) !important;
+    border-right: 4px solid rgba(0,0,0, 0.3) !important;
+    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
+    border-left: 4px solid rgba(0,0,0, 0.1) !important;
+}
+
+.zee{
+    background: #33D8F5;
+    border-top: 4px solid rgba(240,240,240, 0.5) !important;
+    border-right: 4px solid rgba(0,0,0, 0.3) !important;
+    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
+    border-left: 4px solid rgba(0,0,0, 0.1) !important;
+}
+
+.elLeft{
+    background: #e449b8;
+    border-top: 4px solid rgba(240,240,240, 0.5) !important;
+    border-right: 4px solid rgba(0,0,0, 0.3) !important;
+    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
+    border-left: 4px solid rgba(0,0,0, 0.1) !important;
+}
+
+.elRight{
+    background: #fedf46;
+    border-top: 4px solid rgba(240,240,240, 0.5) !important;
+    border-right: 4px solid rgba(0,0,0, 0.3) !important;
+    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
+    border-left: 4px solid rgba(0,0,0, 0.1) !important;
+}
+
+.squre{
+    background: #3e7aed;
+    border-top: 4px solid rgba(240,240,240, 0.5) !important;
+    border-right: 4px solid rgba(0,0,0, 0.3) !important;
+    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
+    border-left: 4px solid rgba(0,0,0, 0.1) !important;
+}
+
+
+.wrap{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
 .start_wrap{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('img/tetris.jpeg');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: url('img/tetris.jpeg') no-repeat center / 100% 100%;
     z-index: 9998;
-    transition: 0.5s ease;
+    transition: 0.6s ease;
 }
 
 .start_inner{
@@ -138,7 +189,7 @@ a{ text-decoration: none; }
     padding: 20px 0;
     background-color: #DBE6FD;
     border-radius: 5px;
-    z-index: 9999;
+    z-index: 9998;
     transition: 1s ease;
 }
 
@@ -175,10 +226,10 @@ a{ text-decoration: none; }
 
 .rank{
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; right: 0;
     width: 230px;
     height: 300px;
+    z-index: 9990;
 }
 
 .rk-table{
@@ -218,16 +269,15 @@ a{ text-decoration: none; }
 
 .tetris_wrap{
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    text-align: center;
+    width: 660px;
+    height: 620px;
+    display: flex;
 }
 
 .tetris_board{
     display: inline-block;
-    vertical-align: top;
-    margin-right: 50px;
     border: 10px solid #fff;
 }
 
@@ -248,9 +298,8 @@ a{ text-decoration: none; }
 
 .support_board{
     position: relative;
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 50px;
+    display: flex;
+    flex-direction: column;
     width: 210px;
     text-align: center;
 }
@@ -279,51 +328,32 @@ a{ text-decoration: none; }
     float: left;
 }
 
-
-.bar{
-    background: #f6395a;
-    border-top: 4px solid rgba(240,240,240, 0.5) !important;
-    border-right: 4px solid rgba(0,0,0, 0.3) !important;
-    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
-    border-left: 4px solid rgba(0,0,0, 0.1) !important;
+@media screen and (max-width: 1200px) {
+    .start_wrap{
+        background: url('img/tetris.jpeg') no-repeat center / auto 100%;
+    }
 }
 
-.tree{
-    background: #c0e218;
-    border-top: 4px solid rgba(240,240,240, 0.5) !important;
-    border-right: 4px solid rgba(0,0,0, 0.3) !important;
-    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
-    border-left: 4px solid rgba(0,0,0, 0.1) !important;
-}
-
-.zee{
-    background: #33D8F5;
-    border-top: 4px solid rgba(240,240,240, 0.5) !important;
-    border-right: 4px solid rgba(0,0,0, 0.3) !important;
-    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
-    border-left: 4px solid rgba(0,0,0, 0.1) !important;
-}
-
-.elLeft{
-    background: #e449b8;
-    border-top: 4px solid rgba(240,240,240, 0.5) !important;
-    border-right: 4px solid rgba(0,0,0, 0.3) !important;
-    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
-    border-left: 4px solid rgba(0,0,0, 0.1) !important;
-}
-
-.elRight{
-    background: #fedf46;
-    border-top: 4px solid rgba(240,240,240, 0.5) !important;
-    border-right: 4px solid rgba(0,0,0, 0.3) !important;
-    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
-    border-left: 4px solid rgba(0,0,0, 0.1) !important;
-}
-
-.squre{
-    background: #3e7aed;
-    border-top: 4px solid rgba(240,240,240, 0.5) !important;
-    border-right: 4px solid rgba(0,0,0, 0.3) !important;
-    border-bottom: 4px solid rgba(0,0,0, 0.9) !important;
-    border-left: 4px solid rgba(0,0,0, 0.1) !important;
+@media screen and (max-width: 768px) {
+    .tetris_wrap{
+        width: 100%;
+        flex-direction: row;
+        
+    }
+    .support_board{
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+    .support_board>div{
+        padding: 0;
+        
+    }
+    .rk-table{
+        font-size: 13px;
+    }
+    .rank{
+        width: 170px;
+        height: 170px;
+    }
+    
 }
