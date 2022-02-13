@@ -27,7 +27,7 @@ let current_blk;
 let level = 1;
 
 const virtual_block  = {
-    form : '',
+    form: '', 
     direction : 0,
     top : 0,
     left : 3
@@ -239,7 +239,7 @@ function generate_Block(){
     current_blk = next_blk;
 };
 
-function next_rendering(next){
+function next_rendering(next){ //다음 블록 미리보기
 
     
     const n_block = Object.keys(blocks)[next]; //블록 모양 확인
@@ -295,7 +295,7 @@ function dropBlock(){
     start = setInterval(() => {
         moveBlock('top', 1);
         esc = 1;
-    }, 15);
+    }, 18);
     setTimeout(()=>{
         prevent_key = 1;
     }, 200);
@@ -308,81 +308,80 @@ function gameOver(){
     esc = 0;
     prevent_key = 0;
     document.querySelector(".gameover").style.display = "block";
-
-    if((score/100).toFixed(0) === check.length.toString()){
-        axios.get(`/rank?score=${score}`).then((res)=>{
+    retry_btn.style.display = "block";
+    // if((score/100).toFixed(0) === check.length.toString()){
+    //     axios.get(`/rank?score=${score}`).then((res)=>{
             
-            if(res.data === 'ranker'){ //랭킹 점수에 도달했을 경우
+    //         if(res.data === 'ranker'){ //랭킹 점수에 도달했을 경우
 
-                setTimeout(()=>{
-                    document.querySelector(".rank-submit").style.display = "block";
-                    document.querySelector(".rank-submit").style.top = "50%";
-                }, 700);
+    //             setTimeout(()=>{
+    //                 document.querySelector(".rank-submit").style.display = "block";
+    //                 document.querySelector(".rank-submit").style.top = "50%";
+    //             }, 700);
                 
-            }else{ //랭킹 점수에 미달했을 경우
-                retry_btn.style.display = "block";
-            }
+    //         }else{ //랭킹 점수에 미달했을 경우
+    //             retry_btn.style.display = "block";
+    //         }
 
-        }).catch(err=>{
-            console.log(err);
-        });
-    }
-
-
+    //     }).catch(err=>{
+    //         console.log(err);
+    //     });
+    // }
 
 }
 
-function rankSubmit(){ //랭킹 점수 전송
+// function rankSubmit(){ //랭킹 점수 전송
 
-    const name = document.querySelector("#nicname").value.replace(/ /g,"");
+//     const name = document.querySelector("#nicname").value.replace(/ /g,"");
 
-    if(name !== ''){ //빈공백 체크
+//     if(name !== ''){ //빈공백 체크
 
-        axios.post('/rank', {
-            "name" : name,
-            "score" : score
-        }).then((res)=>{ //전송 성공
-            document.querySelector("#nicname").value = '';
-            document.querySelector(".rank-submit").style.top = "-50%";
+//         axios.post('/rank', {
+//             "name" : name,
+//             "score" : score
+//         }).then((res)=>{ //전송 성공
+//             document.querySelector("#nicname").value = '';
+//             document.querySelector(".rank-submit").style.top = "-50%";
 
-            setTimeout(()=>{
-                document.querySelector(".rank-submit").style.display = "none";
-                retry_btn.style.display = "block";
-            },500)
+//             setTimeout(()=>{
+//                 document.querySelector(".rank-submit").style.display = "none";
+//                 retry_btn.style.display = "block";
+//             },500)
 
-        }).catch(err =>{
-            console.log(err);
-        });
-    }else{
-        alert("닉네임을 입력해주세요.");
-    }
-}
+//         }).catch(err =>{
+//             console.log(err);
+//         });
+//     }else{
+//         alert("닉네임을 입력해주세요.");
+//     }
+// }
 
-setRank();
-async function setRank() {
+// setRank();
+// async function setRank() {
 
-    rank_table.children[0].innerHTML=`<tr><th>순위</th><th>닉네임</th><th>점수</th></tr>`;
-    axios.get('/readrank').then((res)=>{
+//     rank_table.children[0].innerHTML=`<tr><th>순위</th><th>닉네임</th><th>점수</th></tr>`;
+//     axios.get('/readrank').then((res)=>{
         
-        const rank = res.data;
+//         const rank = res.data;
 
-        rank.map((rk, idx)=>{
-            rank_table.children[0].innerHTML+=` <tr><td>${idx+1}</td><td>${rk.name}</td><td>${rk.score}</td></tr>`;
-        });
+//         rank.map((rk, idx)=>{
+//             rank_table.children[0].innerHTML+=` <tr><td>${idx+1}</td><td>${rk.name}</td><td>${rk.score}</td></tr>`;
+//         });
         
-    }).catch(err =>{
-        console.log(err);
-    })
+//     }).catch(err =>{
+//         console.log(err);
+//     })
 
-}
+// }
 
 // - EventHandling 이벤트 -
+
 start_btn.addEventListener('click', ()=>{//start
     start_wrap.style.top = "-100%";
     init();
 })
 
-
+//키보드 입력 체크
 document.addEventListener('keydown', e=>{
 
     const key_chk = esc === 1 ? true : false;
@@ -440,8 +439,8 @@ document.addEventListener('keydown', e=>{
     }
 })
 
+//일시정지
 stop.querySelector(".stop_btn").addEventListener('click', ()=>{
-
     clearInterval(start);
     start = setInterval(() => {
         esc = 1;
@@ -452,15 +451,16 @@ stop.querySelector(".stop_btn").addEventListener('click', ()=>{
 
 })
 
+//다시하기
 retry_btn.addEventListener('click', ()=>{
-    setRank();
+    // setRank();
     document.querySelector(".gameover").style.display = "none";
     board.innerHTML = "";
     init();
 })
 
-rankBtn.addEventListener('click', ()=>{
-    rankSubmit();
-})
+// rankBtn.addEventListener('click', ()=>{
+//     rankSubmit();
+// })
 
 
