@@ -1,3 +1,21 @@
+//BackGround Music
+let isSound = false;
+const bgm = new Audio();
+
+bgm.src = './sound/bg-sound.mp3';
+bgm.loop = true;
+bgm.volume = '0.3';
+
+const soundOn = document.querySelector('.soundOn');
+const soundOff = document.querySelector('.soundOff');
+const closeBar = document.querySelector('.close-bar');
+const soundBtn = document.querySelector('#sound-control-wrap');
+
+
+const bgmPlay_toggle = () => {
+    soundBtn.click();
+}
+
 
 // - DOM 
 const start_wrap = document.querySelector(".start_wrap");
@@ -11,20 +29,22 @@ const next_board = document.querySelector(".next_block");
 const rankBtn = document.querySelector("#rankBtn");
 const rank_table = document.querySelector(".rk-table");
 
+
 // - Variable
 const check = [];
 const col = 10;
 const rows = 20;
 let score = 0;
 let speed = 1000;
-let temp_block;
 let start;
-let prevent_key = 0; //키 입력 방지
-let prevent_move = 1; //drop할때 움직임 방지
+let prevent_key = false; //키 입력 방지 true : 입력가능 / false : 입력불가
+let prevent_move = true; //drop할때 움직임 방지
 let esc = 0;
 let next_blk;
 let current_blk;
 let level = 1;
+
+let temp_block;
 
 const virtual_block  = {
     form: '', 
@@ -33,8 +53,9 @@ const virtual_block  = {
     left : 3
 };
 
+
 //blocks
-const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이 존재 
+const blocks = { // 각 블록에는 했을때 표시할 4개의 모양이 존재  ex)blocks.tree[0]
     tree : [
         [[0, 1], [2, 1], [1, 0], [1, 1]],
         [[2, 1], [1, 0], [1, 1], [1, 2]],
@@ -75,9 +96,16 @@ const blocks = { // 각 블록에는 전환했을때 표시할 4개의 모양이
 
 
 // - functions
+
+// init() - 시작
+// Rendering()    - 블록 렌더링 
+// add_line()     - 테트리스판 줄 추가
+// check_block()  - 하단 위치 
+// freeze_Block() - 
+
 function init(){
     esc = 1;
-    prevent_key = 1;
+    prevent_key = true;
     level = 1;
     level_txt.innerText = level;
     score = 0;
@@ -86,26 +114,12 @@ function init(){
     temp_block = {...virtual_block}; 
 
     for(let i=0 ; i<rows ; i++){ //테트리스판 행(rows)
-        addLine();
+        add_line();
     }
 
     retry_btn.style.display = 'none';
     current_blk = (Math.random() * 5).toFixed(0);
     generate_Block();
-}
-
-function addLine(){
-    // ul> --> li <-- >ul>li
-    const li = document.createElement("li");
-    // ul > li > --> ul <-- > li
-    const ul = document.createElement("ul");
-
-    for(let j=0 ; j< col ; j++){ //테트리스판 열(column)
-        const tetris_block = document.createElement("li"); //테트리스 기본 블록
-        ul.prepend(tetris_block); //prepend로 앞에 생성되기 때문에[0]
-    }
-    li.prepend(ul);
-    board.prepend(li); 
 }
 
 function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해 
@@ -121,11 +135,10 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
     })
 
     blocks[form][direction].some(block => {
-
         const x = block[0] + left; //블록이 이동될 좌표 저장
         const y = block[1] + top; 
         //이동될 좌표에 <li>요소 유무 확인 ↓
-        const chk_block = board.children[y] ? board.children[y].children[0].children[x] : null; 
+        const chk_block = board.children[y]  ? board.children[y].children[0].children[x] : null; 
         // ↓ 다음으로 이동 될 좌표에 <li> 요소의 유무와 블록이 존재하는 경우를 체크
         const isAvailable = check_block(chk_block);
 
@@ -144,17 +157,34 @@ function Rendering(edgeCase = ''){ // 엣지케이스 구분을 위해
                     Rendering('over');
 
                     if(edgeCase === 'top'){ //바닥 터치
-                        freezeBlock();  //블록 고정
+                        freeze_Block();  //블록 고정
                     }
                 }, 0)
                 return true;
             }
     });
+
     //엣지 케이스에서 되돌리기 위한 이전 값 저장
     virtual_block.top = top;
     virtual_block.left = left;
     virtual_block.direction = direction;
 }
+
+function add_line(){
+    // ul> --> li <-- >ul>li
+    const li = document.createElement("li");
+    // ul > li > --> ul <-- > li
+    const ul = document.createElement("ul");
+
+    for(let j=0 ; j< col ; j++){ //테트리스판 열(column)
+        const tetris_block = document.createElement("li"); //테트리스 기본 블록
+        ul.prepend(tetris_block); //prepend로 앞에 생성되기 때문에[0]
+    }
+    li.prepend(ul);
+    board.prepend(li); 
+}
+
+
 
 function check_block(target){ 
     // ↓ 현재 위치 하단의 <li> 요소의 유무 / 고정된 블록이 존재하는 경우 체크
@@ -165,11 +195,11 @@ function check_block(target){
     }    
 }
 
-function freezeBlock(){ //바닥에서 블록 고정
+function freeze_Block(){ 
     // ↓ 현재 이동중인 moving 클래스를 선언
-    const freezeBlock = document.querySelectorAll('.moving');
+    const freeze_Block = document.querySelectorAll('.moving');
     
-    freezeBlock.forEach(block =>{
+    freeze_Block.forEach(block =>{
         block.classList.replace('moving', 'freeze'); 
     //선언한 moving 클래스를 freeze로 변경하여 기존 블럭 모양은 css로 유지
     })
@@ -192,7 +222,7 @@ function clear_Line_check(){
 
         if(line_checker){
                 Line.remove();
-                addLine();
+                add_line();
                 score+=10;
                 score_txt.innerText = score;
                 
@@ -210,7 +240,6 @@ function clear_Line_check(){
                 //console.log('score : ' + score + 'level : '+ level + "/ speed : " + speed)
             }                    
         })
-
         generate_Block();
 }
 
@@ -276,11 +305,8 @@ function moveBlock(move_direction, x){
 
 function changeDirection(){// 블록의 방향을 시계방향으로 움직임
     
-    if(temp_block.direction < 3)
-        temp_block.direction++;
-    else
-        temp_block.direction = 0;
-
+    if(temp_block.direction < 3) temp_block.direction++;
+    else temp_block.direction = 0;
     Rendering();
 }
 
@@ -297,7 +323,7 @@ function dropBlock(){
         esc = 1;
     }, 18);
     setTimeout(()=>{
-        prevent_key = 1;
+        prevent_key = true;
     }, 200);
 }
 
@@ -306,7 +332,7 @@ function gameOver(){
 
     clearInterval(start);
     esc = 0;
-    prevent_key = 0;
+    prevent_key = false;
     document.querySelector(".gameover").style.display = "block";
     retry_btn.style.display = "block";
     // if((score/100).toFixed(0) === check.length.toString()){
@@ -382,11 +408,11 @@ start_btn.addEventListener('click', ()=>{//start
 })
 
 //키보드 입력 체크
-document.addEventListener('keydown', e=>{
+document.addEventListener('keydown', (e)=>{
 
     const key_chk = esc === 1 ? true : false;
 
-    if(prevent_key === 1){
+    if(prevent_key === true){
         switch(e.keyCode){
             case 27: { //esc
                 if(key_chk){
@@ -404,30 +430,30 @@ document.addEventListener('keydown', e=>{
             case 32: { //스페이스바
                 if(key_chk){
                     dropBlock();
-                    prevent_key = 0;
+                    prevent_key = false;
                 }
                 break;
             }
             case 37: { //오른쪽
-                if(key_chk && prevent_move === 1){
+                if(key_chk && prevent_move === true){
                     moveBlock('left', -1);
                 }
                 break;
             }
             case 39: { //오른쪽
-                if(key_chk && prevent_move === 1){
+                if(key_chk && prevent_move === true){
                     moveBlock('left', 1);
                 }
                 break;
             }
             case 40:{ //아래
-                if(key_chk && prevent_move === 1){
+                if(key_chk && prevent_move === true){
                     moveBlock('top', 1);
                 }
                 break;
             }
             case 38: { //위
-                if(key_chk && prevent_move === 1){
+                if(key_chk && prevent_move === true){
                     changeDirection();
                 }    
                 break;
@@ -444,7 +470,7 @@ stop.querySelector(".stop_btn").addEventListener('click', ()=>{
     clearInterval(start);
     start = setInterval(() => {
         esc = 1;
-        prevent_key = 1;
+        prevent_key = true;
         moveBlock('top', 1);
     }, speed);
     stop.style.display = 'none';
@@ -462,5 +488,21 @@ retry_btn.addEventListener('click', ()=>{
 // rankBtn.addEventListener('click', ()=>{
 //     rankSubmit();
 // })
+soundBtn.addEventListener('click', ()=> {
+    soundBtn.blur();
+    if(isSound === false){
+        bgm.play();
+        isSound= true;
+        closeBar.style.opacity= '0';
 
+    }else{
+        bgm.pause();
+        isSound= false;
+        closeBar.style.opacity= '1';
+    }
+});
+
+
+
+console.log('ESC로 멈출 수 있습니다.')
 

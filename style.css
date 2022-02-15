@@ -70,6 +70,33 @@ a{ text-decoration: none; }
     height: 100vh;
 }
 
+#sound-control-wrap{
+    position: fixed;
+    top: 1.5em; right: 1.5em;
+    width: 4em; height: 4em;
+    padding: 5px; border-radius: 50%;
+    border: 3px solid #fff;
+    background: transparent;
+    cursor: pointer;
+    outline: 0;
+    z-index: 9999;
+}
+.close-bar{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 150%;
+    height: 6px;
+    background: red;
+    opacity: 1;
+    transition: opacity .4s ease;
+}
+#sound-control-wrap>box-icon{
+    width: 100%;
+    height: 100%;
+}
+
 .start_wrap{
     position: fixed;
     top: 0; left: 0;
