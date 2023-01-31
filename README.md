@@ -2,8 +2,6 @@
 
 ## 자바스크립트를 활용한 테트리스 게임
 
-## --> [Link](https://www.juni-official.com/portfolio/tetris/tetris.html)
-
 ### 조작법
 1. 이동 : ← →
 2. 방향전환 : ↑
